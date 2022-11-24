@@ -20,7 +20,22 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clu
 console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+//MongoDB Collection //
+async function run() {
+    const categoryCollection = client.db('goriberSeller').collection('category');
+    try {
+        app.get('/categories', async (req, res) => {
+            const query = {}
+            const cursor = categoryCollection.find(query);
+            const categories = await cursor.toArray();
+            res.send(categories);
+        });
+    }
+    finally {
 
+    }
+}
+run().catch(err => console.error(err));
 
 app.listen(port, () => {
     console.log(`Goriber Seller Server Running on ${port}`);
