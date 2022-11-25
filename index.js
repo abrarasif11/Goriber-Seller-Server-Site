@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
 
@@ -24,6 +25,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     const categoryCollection = client.db('goriberSeller').collection('category');
     const allcategoriesCollection = client.db('goriberSeller').collection('allcategories');
+    const ordersCollection = client.db('goriberSeller').collection('orders');
+    const itemsCollection = client.db('goriberSeller').collection('items');
     try {
         app.get('/categories', async (req, res) => {
             const query = {}
@@ -38,12 +41,6 @@ async function run() {
             const allcategories = await cursor.toArray();
             res.send(allcategories);
         });
-        app.get('/offers', async (req, res) => {
-            const query = {}
-            const cursor = offersCollection.find(query);
-            const offers = await cursor.toArray();
-            res.send(offers);
-        });
         app.get("/categories/:id", async (req, res) => {
             const id = req.params.id;
             const query = {};
@@ -51,6 +48,27 @@ async function run() {
             const categories = cursor.filter((n) => n.category_id === id);
             res.send(categories);
           });
+          app.post('/orders' , async(req, res) => {
+            const order = req.body
+            console.log(order);
+            const result = await ordersCollection.insertOne(order);
+            res.send(result);
+          });
+
+          //Modal data //
+          app.get("/items", async (req, res) => {
+            const query = {};
+            const cursor = await itemsCollection.find(query);
+            const reviews = await cursor.toArray();
+            const reverseArray = reviews.reverse();
+            res.send(reverseArray);
+        });
+
+        app.post("/items", async (req, res) => {
+            const items = req.body;
+            const result = await itemsCollection.insertOne(items);
+            res.send(result);
+        });
     }
     finally {
 
