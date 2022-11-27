@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
@@ -143,6 +143,14 @@ async function run() {
             const query = { email }
             const user = await userCollection.findOne(query);
             res.send({ isAdmin: user?.role === 'admin' });
+        });
+        // admin delete //
+        app.delete("/usersList/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await userCollection.deleteOne(query);
+            console.log(result);
+            res.send(result);
         });
     }
     finally {
