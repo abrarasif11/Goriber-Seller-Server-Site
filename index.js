@@ -152,6 +152,13 @@ async function run() {
             console.log(result);
             res.send(result);
         });
+        // add product //
+        app.post("/catagories", async (req, res) => {
+            const items = req.body;
+            console.log(items);
+            const result = await allcategoriesCollection.insertOne(items);
+            res.send(result);
+        });
     }
     finally {
 
