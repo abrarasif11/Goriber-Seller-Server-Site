@@ -78,7 +78,6 @@ async function run() {
             const result = await ordersCollection.insertOne(order);
             res.send(result);
         });
-
         //Modal data //
         app.get("/items", async (req, res) => {
             const query = {};
@@ -87,7 +86,6 @@ async function run() {
             const reverseArray = reviews.reverse();
             res.send(reverseArray);
         });
-
         app.post("/items", async (req, res) => {
             const items = req.body;
             const result = await itemsCollection.insertOne(items);
@@ -100,7 +98,6 @@ async function run() {
             const cursor = await itemsCollection.find(query).toArray();;
             res.send(cursor);
         });
-
         //   JWT TOKen //
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
