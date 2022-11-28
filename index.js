@@ -47,6 +47,8 @@ async function run() {
     const ordersCollection = client.db('goriberSeller').collection('orders');
     const userCollection = client.db('goriberSeller').collection('users');
     const itemsCollection = client.db('goriberSeller').collection('items');
+    const sellerProductCollection = client.db('goriberSeller').collection('products');
+    const advertiseCollection = client.db('goriberSeller').collection('advertise');
     try {
         app.get('/categories', async (req, res) => {
             const query = {}
@@ -153,10 +155,38 @@ async function run() {
             res.send(result);
         });
         // add product //
-        app.post("/catagories", async (req, res) => {
+        app.post("/myproducts", async (req, res) => {
+            const myproduct = req.body;
+            const myproducts = await sellerProductCollection.insertOne(myproduct);
+            res.send(myproducts);
+          });
+      
+          app.get("/myproducts", async (req, res) => {
+            const query = {};
+            const myproducts = await sellerProductCollection.find(query).toArray();
+            res.send(myproducts);
+          });
+
+          // advertise items
+        app.post("/advertise", async (req, res) => {
             const items = req.body;
             console.log(items);
-            const result = await allcategoriesCollection.insertOne(items);
+            const result = await advertiseCollection.insertOne(items);
+            res.send(result);
+        });
+
+        app.get("/advertise", async (req, res) => {
+            const query = {};
+            const cursor = await advertiseCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
+        app.delete("/advertise", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await advertiseCollection.deleteOne(query);
+            console.log(result);
             res.send(result);
         });
     }
